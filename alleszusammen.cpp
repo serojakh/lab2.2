@@ -78,6 +78,10 @@ int main()
     int amountOL = count_lines(filename);
 
     divide(amountOL);
+    string word;
+    cout << "Введите слово: ";
+    cin >> word;
+
 
     
 
