@@ -14,60 +14,20 @@
 
 using namespace std;
 
-int count_lines (string filename)
+int count_lines (string text)
 {
     int amountOL = 0;
-    string content;
-
-    ifstream file (filename);
-    if (file.is_open() == 0)
-    {
-        cout << "Ошибка! Файл " << filename << " не был открыт." << endl;
-    }
-
-    else 
-    {
-        getline(file, content);
-        cout << endl << " -- Информация из файла " << filename << " -- " << endl << content << endl;
-        
-        for (char c : content)
+    for (char c : text)
         {
             if (c == '.' || c == '?' || c == '!')
             {
                 amountOL++;
             }
         }
-        cout << endl << "Количество предложений: " << amountOL << endl;
-
-        string *line = new string[amountOL];
-
-        for (char c : content)
-        {
-            if (c == '.' || c == '?' || c == '!')
-            {
-
-            }
-        }
-    }
-    file.close();
-
     return amountOL;
 }
 
-// может все в одну функцию запихнуть? типо сразу будем читать строку и при встрече конца предложения 
-void divide(int amountOL)
-{
-    string *lines = new string[amountOL];
-
-    for (int i = 0; i < amountOL; i++)
-    {
-
-    }
-
-}
-
-
-
+//
 
 int main()
 {
@@ -75,15 +35,26 @@ int main()
     cout << "Введите имя файла, информацию из которого хотите считать: ";
     cin >> filename;
 
-    int amountOL = count_lines(filename);
+    ifstream file (filename);
+    if (file.is_open() == 0)
+    {
+        cout << "Ошибка! Файл " << filename << " не был открыт." << endl;
+        return 1;
+    }
 
-    divide(amountOL);
-    string word;
-    cout << "Введите слово: ";
-    cin >> word;
+    string text;
+    string line;
+    while (getline(file, line)) 
+    {
+        text += line + "\n"; 
+    }
 
+    file.close();
 
-    
+    cout << "----ИНФОРМАЦИЯ ИЗ ФАЙЛА----" << endl << endl;
+    cout << text << endl;
+
+    cout << count_lines(text);
 
     return 0;
 }
