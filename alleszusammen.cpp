@@ -14,20 +14,43 @@
 
 using namespace std;
 
-int count_lines (string text)
+void count_divide_count (string text, string word)
 {
     int amountOL = 0;
     for (char c : text)
+    {
+        if (c == '.' || c == '?' || c == '!')
         {
-            if (c == '.' || c == '?' || c == '!')
-            {
-                amountOL++;
-            }
+            amountOL++;
         }
-    return amountOL;
+    }
+
+    char** sentences = new char*[amountOL];
+
+    int sentenceIndex = 0;
+    int start = 0;
+    for (int i = 0; i < text.length(); i++) 
+    {
+        if (text[i] == '.' || text[i] == '?' || text[i] == '!') 
+        {
+            int length = i - start + 1;
+            sentences[sentenceIndex] = new char[length + 1];
+            strncpy(sentences[sentenceIndex], text.c_str() + start, length);
+            sentences[sentenceIndex][length] = '\0';
+            sentenceIndex++;
+            start = i + 1;
+        }
+    }
+    
+
+    for (int i = 0; i < amountOL; i++)
+    {
+        cout << "Предложение №" << i + 1 << ": " << sentences[i];
+        // вот здесь должнен проивзодиться подсчет вхождения заданного слова, а затем вывод цифры
+    }
+
 }
 
-//
 
 int main()
 {
@@ -54,7 +77,10 @@ int main()
     cout << "----ИНФОРМАЦИЯ ИЗ ФАЙЛА----" << endl << endl;
     cout << text << endl;
 
-    cout << count_lines(text);
+    string word;
+    cout << "Введите слово: ";
+    cin >> word;
+    count_divide_count(text, word);
 
     return 0;
 }
