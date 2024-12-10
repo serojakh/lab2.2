@@ -1,86 +1,91 @@
-/*Кот сидел на окне и смотрел на кота, который сидел на другом окне. 
-Этот кот был серым, а тот кот — белым. 
-Белый кот, заметив серого кота, запрыгнул к нему на окно: два кота сидели на одном окне и смотрели на улицу. 
-Мимо прошёл ещё один кот. 
-Этот кот был рыжим? Рыжий кот посмотрел на двух котов на окне и пошёл дальше. 
-Теперь на улице было три кота (серый кот, белый кот и рыжий кот). 
-Все коты любили сидеть на окне!*/
+/*There is a cute little cat sitting on the windowsill, watching the birds and an orange cat outside. 
+His fur is soft and fluffy, perfect for snuggling with on a chilly evening. 
+I love how the cat purrs contentedly when I scratch behind its ears. 
+Sometimes, the cat likes to play with another cat or a ball of yarn, swatting at it with its paws. 
+I often find the cat curled up in a sunny spot, basking in the warmth. 
+My heart melts every time I see the his big green eyes looking up at me.*/
 
 
 
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <cstring>
 
 using namespace std;
 
-void count_divide_count (string text, string word)
-{
+void count_divide_count(const char *text, const char *word) {
     int amountOL = 0;
-    for (char c : text)
-    {
-        if (c == '.' || c == '?' || c == '!')
-        {
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (text[i] == '.' || text[i] == '?' || text[i] == '!') {
             amountOL++;
         }
     }
 
-    char** sentences = new char*[amountOL];
-
+    char **sentences = new char *[amountOL];
     int sentenceIndex = 0;
     int start = 0;
-    for (int i = 0; i < text.length(); i++) 
-    {
-        if (text[i] == '.' || text[i] == '?' || text[i] == '!') 
-        {
+
+    for (int i = 0; i < strlen(text); i++) {
+        if (text[i] == '.' || text[i] == '?' || text[i] == '!') {
             int length = i - start + 1;
             sentences[sentenceIndex] = new char[length + 1];
-            strncpy(sentences[sentenceIndex], text.c_str() + start, length);
+            strncpy(sentences[sentenceIndex], text + start, length);
             sentences[sentenceIndex][length] = '\0';
             sentenceIndex++;
             start = i + 1;
         }
     }
-    
 
-    for (int i = 0; i < amountOL; i++)
-    {
-        cout << "Предложение №" << i + 1 << ": " << sentences[i];
-        // вот здесь должнен проивзодиться подсчет вхождения заданного слова, а затем вывод цифры
+    for (int i = 0; i < amountOL; i++) {
+        cout << endl << "Sentence #" << i + 1 << ": " << sentences[i] << endl;
+        int count = 0;
+
+        char *sentence = sentences[i];
+        char *token = strtok(sentence, " ,.;!?\n");
+        while (token != nullptr) {
+            if (strcmp(token, word) == 0) {
+                count++;
+            }
+            token = strtok(nullptr, " ,.;!?\n");
+        }
+
+        cout << "The word '" << word << "' appears " << count << " time(s)." << endl;
     }
 
+    for (int i = 0; i < amountOL; i++) {
+        delete[] sentences[i];
+    }
+    delete[] sentences;
 }
 
-
-int main()
-{
+int main() {
+    cout << "Enter the filename: ";
     string filename;
-    cout << "Введите имя файла, информацию из которого хотите считать: ";
     cin >> filename;
 
-    ifstream file (filename);
-    if (file.is_open() == 0)
-    {
-        cout << "Ошибка! Файл " << filename << " не был открыт." << endl;
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open the file " << filename << endl;
         return 1;
     }
 
-    string text;
-    string line;
-    while (getline(file, line)) 
-    {
-        text += line + "\n"; 
-    }
+    cout << "The text below was extracted from file " << filename << ":" << endl;
 
+    const int MAX_TEXT_SIZE = 1000;
+    char *text = new char[MAX_TEXT_SIZE];
+    file.getline(text, MAX_TEXT_SIZE, '\0');
     file.close();
 
-    cout << "----ИНФОРМАЦИЯ ИЗ ФАЙЛА----" << endl << endl;
+    cout << "----TEXT----" << endl;
     cout << text << endl;
 
-    string word;
-    cout << "Введите слово: ";
+    cout << "Enter the word to search for: ";
+    char word[100];
     cin >> word;
+
     count_divide_count(text, word);
+
+    delete[] text;
 
     return 0;
 }
